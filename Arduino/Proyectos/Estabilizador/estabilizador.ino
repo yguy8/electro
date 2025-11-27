@@ -33,8 +33,8 @@ void loop() {
     digitalWrite(buzzPin, HIGH);
 
     // Ajustar servos para estabilizar
-    servo1.write(70);   // mueve un poco hacia un lado
-    servo2.write(110);  // mueve hacia el otro
+    servo1.write(30);   // mueve un poco hacia un lado
+    servo2.write(150);  // mueve hacia el otro
   } else {
     // Si está estable → apagar buzzer
     digitalWrite(buzzPin, LOW);
