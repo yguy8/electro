@@ -1,6 +1,8 @@
 #include <Stepper.h>
 int stepsPerRevolution = 2048;
 int motSpeed = 12;
+//conexiones
+//  | in4 -> 11  | in3 -> 10  | in2 -> 9 | in1 -> 8 |
 Stepper myStepper(stepsPerRevolution,8,10,9,11);
 int dt = 1500;
 
