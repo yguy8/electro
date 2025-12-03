@@ -16,7 +16,9 @@ void setup() {
 void loop() {
   int ldrIzq = analogRead(pinLdrIzq);
   int ldrDerRaw = analogRead(pinLdrDer);
-  int ldrDer = 1023 - ldrDerRaw; // inverso correcto
+  int ldrDer = 800 - ldrDerRaw; // inverso correcto esta ajustado porque las
+  //ldr no leen el mismo valor una con luz marca 15 y la otra marca 15 con sombra
+  //800 es el ajuste porque es la diferencia que existe entre lecturas
 
   int dif = ldrIzq - ldrDer;
 
@@ -44,5 +46,5 @@ void loop() {
     }
   }
 
-  delay(200);
+  delay(100);
 }
