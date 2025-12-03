@@ -16,27 +16,33 @@ void setup() {
 void loop() {
   int ldrIzq = analogRead(pinLdrIzq);
   int ldrDerRaw = analogRead(pinLdrDer);
-  int ldrDer = 1223 - ldrDerRaw; // invertimos y restamos 200 extra que tiene la ldr
+  int ldrDer = 1023 - ldrDerRaw; // inverso correcto
 
   int dif = ldrIzq - ldrDer;
 
-  if (abs(dif) > 50) { // zona muerta
-    if (dif > 0) {
-      angulo += 12; // mover hacia izquierda
-    } else {
-      angulo -= 12; // mover hacia derecha
-    }
-    angulo = constrain(angulo, 10, 170);
-    servo.write(angulo);
+  if (abs(dif) < 20) {
+    // Si son iguales o muy cercanos → centro
+    angulo = 90;
+  } else {
+    // Movimiento proporcional
+    int ajuste = dif / 40; // factor de sensibilidad
+    angulo = constrain(angulo + ajuste, 10, 170);
   }
 
-  //lecturas 
-  Serial.println("------------------------");
-  Serial.print("Izq: "); Serial.println(ldrIzq);
-  Serial.print(" Der: "); Serial.println(ldrDer);
-  Serial.print(" Dif: "); Serial.println(dif);
-  Serial.print(" Angulo: "); Serial.println(angulo);
-  delay(5000);
+  servo.write(angulo);
+
+  // Lecturas en monitor serial
+  if (Serial.available() > 0) {
+    String comando = Serial.readStringUntil('\n');
+    comando.trim();
+    if (comando == "leer") {
+      Serial.println("------------------------");
+      Serial.print("Izq: "); Serial.println(ldrIzq);
+      Serial.print("Der: "); Serial.println(ldrDer);
+      Serial.print("Dif: "); Serial.println(dif);
+      Serial.print("Angulo: "); Serial.println(angulo);
+    }
+  }
+
+  delay(200);
 }
-
-
