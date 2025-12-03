@@ -26,7 +26,7 @@ void loop() {
     } else {
       angulo -= 2; // mover hacia la derecha
     }
-    angulo = constrain(angulo, 0, 180);
+    angulo = constrain(angulo, 10, 170);
     servo.write(angulo);
   }
 
