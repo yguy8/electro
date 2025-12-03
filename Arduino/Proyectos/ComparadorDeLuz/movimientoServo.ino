@@ -22,9 +22,9 @@ void loop() {
 
   if (abs(dif) > 50) { // zona muerta
     if (dif > 0) {
-      angulo += 2; // mover hacia izquierda
+      angulo += 12; // mover hacia izquierda
     } else {
-      angulo -= 2; // mover hacia derecha
+      angulo -= 12; // mover hacia derecha
     }
     angulo = constrain(angulo, 10, 170);
     servo.write(angulo);
