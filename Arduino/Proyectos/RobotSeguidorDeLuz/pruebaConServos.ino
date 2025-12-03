@@ -18,7 +18,7 @@ void setup() {
 void loop() {
   int valorLuz = analogRead(sensorLuz);
 
-  if (valorLuz > umbral) {
+  if (valorLuz < umbral) {
     // Si hay luz, mover los servos para simular caminar
     servoIzq.write(40);
     servoDer.write(130);
