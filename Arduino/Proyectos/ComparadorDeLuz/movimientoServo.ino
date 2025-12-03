@@ -16,7 +16,7 @@ void setup() {
 void loop() {
   int ldrIzq = analogRead(pinLdrIzq);
   int ldrDerRaw = analogRead(pinLdrDer);
-  int ldrDer = 1023 - ldrDerRaw; // invertimos
+  int ldrDer = 1223 - ldrDerRaw; // invertimos y restamos 200 extra que tiene la ldr
 
   int dif = ldrIzq - ldrDer;
 
@@ -30,10 +30,13 @@ void loop() {
     servo.write(angulo);
   }
 
-  // Serial.print("Izq: "); Serial.print(ldrIzq);
-  // Serial.print(" Der: "); Serial.print(ldrDer);
-  // Serial.print(" Dif: "); Serial.print(dif);
-  // Serial.print(" Angulo: "); Serial.println(angulo);
-
-  delay(100);
+  //lecturas 
+  Serial.println("------------------------");
+  Serial.print("Izq: "); Serial.println(ldrIzq);
+  Serial.print(" Der: "); Serial.println(ldrDer);
+  Serial.print(" Dif: "); Serial.println(dif);
+  Serial.print(" Angulo: "); Serial.println(angulo);
+  delay(5000);
 }
+
+
