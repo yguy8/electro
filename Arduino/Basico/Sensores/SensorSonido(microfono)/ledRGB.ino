@@ -1,7 +1,7 @@
 // Pin del micrófono
 int micPin = A0;
 
-// Pines del LED RGB (usa resistencias de 220Ω en cada color)
+// Pines del LED RGB
 int redPin   = 9;
 int greenPin = 10;
 int bluePin  = 11;
