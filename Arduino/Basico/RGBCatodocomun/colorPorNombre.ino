@@ -23,7 +23,8 @@ void setup() {
   // Aplicar el color inicial
   setColor(r, g, b);
   Serial.println("Color por defecto: Azul");
-  Serial.println("Escribe un color en el monitor serial (rojo, verde, azul, amarillo, cian, magenta, blanco, morado)");
+  Serial.println("Escribe un color en el monitor serial:");
+  Serial.println("rojo, verde, azul, amarillo, cian, magenta, blanco, morado, naranja, azulcobalto");
 }
 
 void loop() {
@@ -48,8 +49,10 @@ void loop() {
       r = 255; g = 255; b = 255;
     } else if (comando.equalsIgnoreCase("morado")) {
       r = 128; g = 0; b = 128;
+    } else if (comando.equalsIgnoreCase("naranja")) {
+      r = 255; g = 45; b = 0;   // Naranja
     } else {
-      Serial.println("Comando no reconocido. Intenta con: rojo, verde, azul, amarillo, cian, magenta, blanco, morado.");
+      Serial.println("Comando no reconocido. Intenta con: rojo, verde, azul, amarillo, cian, magenta, blanco, morado, naranja.");
     }
 
     // Aplicar el nuevo color
