@@ -1,3 +1,4 @@
+//hay 4 leds que se encienden según el nivel de sonido 1-bajo 4-alto
 int micPin = A0;
 int ledPins[4] = {3, 5, 6, 9};
 int umbral = 200; // Ajusta según el ambiente
