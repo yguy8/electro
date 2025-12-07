@@ -1,10 +1,11 @@
+//el sonido lo convierte a colores que pasa por las lista de 8 colores y si hay sonido se encienden y sino se apaga
 // Pin del micrófono
 int micPin = A0;
 
 // Pines de los LEDs RGB (dos LEDs)
 int redPins[]   = {9, 6};   // Rojo en pin 6
 int greenPins[] = {10, 5};   // Verde en pin 5
-int bluePins[]  = {11, 3};  // Azul en 11 y 3 (ejemplo)
+int bluePins[]  = {11, 3};  // Azul en 11 y 3 
 
 int numLEDs = 2; // Número de LEDs RGB
 
