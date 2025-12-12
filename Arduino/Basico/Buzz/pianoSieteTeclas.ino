@@ -1,15 +1,15 @@
 #include <CapacitiveSensor.h>
 
-// Configuración de sensores (pin común = 2, pines de recepción = 3–9)
-CapacitiveSensor cs1 = CapacitiveSensor(2,3);
-CapacitiveSensor cs2 = CapacitiveSensor(2,4);
-CapacitiveSensor cs3 = CapacitiveSensor(2,5);
-CapacitiveSensor cs4 = CapacitiveSensor(2,6);
-CapacitiveSensor cs5 = CapacitiveSensor(2,7);
-CapacitiveSensor cs6 = CapacitiveSensor(2,8);
-CapacitiveSensor cs7 = CapacitiveSensor(2,9);
+// Configuración de sensores (pin común = 3, pines de recepción = 4–10)
+CapacitiveSensor cs1 = CapacitiveSensor(3,4);
+CapacitiveSensor cs2 = CapacitiveSensor(3,5);
+CapacitiveSensor cs3 = CapacitiveSensor(3,6);
+CapacitiveSensor cs4 = CapacitiveSensor(3,7);
+CapacitiveSensor cs5 = CapacitiveSensor(3,8);
+CapacitiveSensor cs6 = CapacitiveSensor(3,9);
+CapacitiveSensor cs7 = CapacitiveSensor(3,10);
 
-int buzzer = 10;
+int buzzer = 2;
 
 void setup() {
   pinMode(buzzer, OUTPUT);
@@ -25,12 +25,12 @@ void loop() {
   long val6 = cs6.capacitiveSensor(30);
   long val7 = cs7.capacitiveSensor(30);
 
-  if(val1 > 300) tone(buzzer, 262);   // Do
-  else if(val2 > 300) tone(buzzer, 294); // Re
-  else if(val3 > 300) tone(buzzer, 330); // Mi
-  else if(val4 > 300) tone(buzzer, 349); // Fa
-  else if(val5 > 300) tone(buzzer, 392); // Sol
-  else if(val6 > 300) tone(buzzer, 440); // La
-  else if(val7 > 300) tone(buzzer, 494); // Si
+  if(val1 > 100) tone(buzzer, 262);   // Do
+  else if(val2 > 100) tone(buzzer, 294); // Re
+  else if(val3 > 100) tone(buzzer, 330); // Mi
+  else if(val4 > 100) tone(buzzer, 349); // Fa
+  else if(val5 > 100) tone(buzzer, 392); // Sol
+  else if(val6 > 100) tone(buzzer, 440); // La
+  else if(val7 > 100) tone(buzzer, 494); // Si
   else noTone(buzzer);
 }
