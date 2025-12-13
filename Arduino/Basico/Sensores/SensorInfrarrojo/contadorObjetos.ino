@@ -14,7 +14,7 @@ void loop() {
   // Detectar transición de HIGH -> LOW (cuando se interrumpe el haz)
   if (estadoAnterior == HIGH && valor == LOW) {
     contador++;
-    Serial.print("Objeto detectado. Contador = ");
+//Serial.print("Objeto detectado. Contador = ");
     Serial.println(contador);
   }
 
