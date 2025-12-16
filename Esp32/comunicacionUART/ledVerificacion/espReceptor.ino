@@ -1,4 +1,4 @@
-//Receptor
+// Receptor ESP32 #2
 
 #define RXD2 22
 #define TXD2 23
@@ -6,7 +6,7 @@
 
 void setup() {
   Serial.begin(115200);
-  Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
+  Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
 
   // Apagar LED al inicio
   rgbLedWrite(RGB_PIN, 0, 0, 0);
@@ -18,14 +18,15 @@ void loop() {
     String data = Serial2.readStringUntil('\n');
     Serial.println("Recibido: " + data);
 
-    rgbLedWrite(RGB_PIN, 0, 255, 0); // Verde
-    delay(200);
-    rgbLedWrite(RGB_PIN, 0, 0, 0);   // Apagar
+    // LED verde para indicar recepción
+    rgbLedWrite(RGB_PIN, 0, 255, 0);
+    delay(300);
+    rgbLedWrite(RGB_PIN, 0, 0, 0);
 
     // Responder
-    rgbLedWrite(RGB_PIN, 0, 0, 255); // Azul
+    rgbLedWrite(RGB_PIN, 0, 0, 255); // Azul para envío
     Serial2.println("Hola ESP32 #1, recibido!");
-    delay(200);
-    rgbLedWrite(RGB_PIN, 0, 0, 0);   // Apagar
+    delay(300);
+    rgbLedWrite(RGB_PIN, 0, 0, 0);
   }
 }
