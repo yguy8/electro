@@ -1,7 +1,7 @@
 //Envia (emisor)
 
-#define RXD2 16
-#define TXD2 17
+#define RXD2 3
+#define TXD2 1
 
 void setup() {
   Serial.begin(115200); // Monitor serie
