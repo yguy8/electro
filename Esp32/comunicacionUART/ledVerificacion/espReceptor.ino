@@ -1,7 +1,7 @@
 // Receptor ESP32 #2
 
-#define RXD2 22
-#define TXD2 23
+#define RXD2 3
+#define TXD2 1
 #define RGB_PIN 16
 
 void setup() {
