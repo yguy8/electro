@@ -1,4 +1,4 @@
-//parpadear el led del GPIO 2
+//parpadear el led del GPIO 2, el led esta integrado con la placa
 
 #define LED_BUILTIN 2
 
