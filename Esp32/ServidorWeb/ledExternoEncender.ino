@@ -6,7 +6,7 @@ const char* password = "password";
 
 WiFiServer server(80);
 
-const int ledPin = 13; // led a encender
+const int ledPin = 4; // pin del led a encender
 
 void setup() {
   Serial.begin(115200);
