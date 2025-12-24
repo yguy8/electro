@@ -15,16 +15,40 @@ const int led3 = 5;
 WebServer server(80);
 
 void handleRoot() {
-  String html = "<!DOCTYPE html><html><head><title>Control LEDs</title></head><body>";
+  String html = "<!DOCTYPE html><html><head><title>Control LEDs</title>";
+  html += "<style>";
+  html += "body { font-family: Arial, sans-serif; text-align: center; background: #f0f0f0; }";
+  html += "h2 { color: #333; margin-top: 20px; }";
+  html += "form { margin-top: 30px; }";
+  html += "input[type=submit] {";
+  html += "  background-color: #4CAF50;";
+  html += "  border: none;";
+  html += "  color: white;";
+  html += "  padding: 15px 32px;";
+  html += "  text-align: center;";
+  html += "  text-decoration: none;";
+  html += "  display: inline-block;";
+  html += "  font-size: 18px;";
+  html += "  margin: 10px;";
+  html += "  border-radius: 8px;";
+  html += "  cursor: pointer;";
+  html += "  transition: 0.3s;";
+  html += "}";
+  html += "input[type=submit]:hover { background-color: #45a049; }";
+  html += "</style></head><body>";
+
   html += "<h2>Control de LEDs por porcentaje</h2>";
   html += "<form action='/set' method='GET'>";
   html += "<input type='submit' name='value' value='0%'>";
   html += "<input type='submit' name='value' value='30%'>";
   html += "<input type='submit' name='value' value='60%'>";
   html += "<input type='submit' name='value' value='100%'>";
-  html += "</form></body></html>";
+  html += "</form>";
+
+  html += "</body></html>";
   server.send(200, "text/html", html);
 }
+
 
 void handleSet() {
   String value = server.arg("value");
