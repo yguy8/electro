@@ -1,12 +1,18 @@
-// Sensor de vibración con LED azul respirando y pip sincronizado
+// Sensor de vibración con estado de alerta
 const int pinSensor = 2;   // Sensor de vibración
 const int ledAzul = 6;     // LED azul (PWM)
 const int ledRojo = 9;     // LED rojo (PWM)
 const int buzzer = 10;     // Buzzer
 
-unsigned long tiempoAnterior = 0;
+// Temporización
+unsigned long tiempoAnteriorPip = 0;
+unsigned long ultimoEventoAlerta = 0;
+const unsigned long retencionAlertaMs = 300; // mantiene alerta 300 ms después del último pulso
 
-// Variables para efecto rojo modulando
+// Estado
+bool alertaActiva = false;
+
+// Variables para efectos
 int tonoActual = 400;
 int direccionTono = 10;
 int brilloRojo = 0;
@@ -17,44 +23,60 @@ void setup() {
   pinMode(ledAzul, OUTPUT);
   pinMode(ledRojo, OUTPUT);
   pinMode(buzzer, OUTPUT);
+
+  analogWrite(ledAzul, 0);
+  analogWrite(ledRojo, 0);
+  noTone(buzzer);
 }
 
 void loop() {
+  // Lectura del sensor y actualización de estado de alerta con retención
   int estadoSensor = digitalRead(pinSensor);
+  unsigned long ahora = millis();
 
   if (estadoSensor == HIGH) {
+    alertaActiva = true;
+    ultimoEventoAlerta = ahora;
+  } else {
+    // pasa a estable solo si transcurrió el tiempo de retención sin nueva vibración
+    if (alertaActiva && (ahora - ultimoEventoAlerta > retencionAlertaMs)) {
+      alertaActiva = false;
+    }
+  }
+
+  if (alertaActiva) {
     // ALERTA: vibración detectada
-    digitalWrite(ledAzul, LOW); // LED azul apagado
-    alarmaModuladaPasoAPaso();  // LED rojo + buzzer sincronizados
+    analogWrite(ledAzul, 0);   // LED azul apagado SIEMPRE en alerta
+    alarmaModuladaPasoAPaso(); // LED rojo + buzzer sincronizados
   } else {
     // ESTABLE: sin vibración
-    noTone(buzzer);             // buzzer apagado
-    analogWrite(ledRojo, 0);    // LED rojo apagado
-    efectoLedAzul();            // LED azul respirando
-    pipRadar();                 // Pip cada 6 segundos + LED azul máximo
+    noTone(buzzer);            // buzzer apagado (salvo pip)
+    analogWrite(ledRojo, 0);   // LED rojo apagado
+    efectoLedAzul();           // LED azul respirando
+    pipRadar();                // Pip cada 6 s + LED azul al máximo en el pip
   }
 }
 
-// Función: alarma modulada paso a paso (sin bucles largos)
+// Alarma modulada paso a paso (sin bucles largos)
 void alarmaModuladaPasoAPaso() {
-  // actualizar tono
+  // tono sube y baja
   tone(buzzer, tonoActual);
   tonoActual += direccionTono;
   if (tonoActual >= 1000 || tonoActual <= 400) {
     direccionTono = -direccionTono;
   }
 
-  // actualizar brillo rojo
+  // brillo rojo sube y baja sincronizado
   analogWrite(ledRojo, brilloRojo);
   brilloRojo += direccionBrillo;
   if (brilloRojo >= 255 || brilloRojo <= 0) {
     direccionBrillo = -direccionBrillo;
   }
 
-  delay(10); // velocidad de cambio
+  delay(10); // velocidad del ciclo de alerta
 }
 
-// Función: LED azul respirando
+// LED azul respirando en modo estable
 void efectoLedAzul() {
   static int brillo = 0;
   static int direccion = 5;
@@ -72,16 +94,16 @@ void efectoLedAzul() {
   delay(30); // velocidad de respiración
 }
 
-// Función: pip cada 6 segundos + LED azul máximo
+// Pip cada 6 segundos + LED azul al máximo en ese instante (modo radar)
 void pipRadar() {
-  unsigned long tiempoActual = millis();
-  if (tiempoActual - tiempoAnterior >= 6000) {
-    tiempoAnterior = tiempoActual;
+  unsigned long ahora = millis();
+  if (ahora - tiempoAnteriorPip >= 6000) {
+    tiempoAnteriorPip = ahora;
 
-    // LED azul al máximo brillo
+    // refuerzo visual: azul al máximo
     analogWrite(ledAzul, 255);
 
-    // Pip corto
+    // pip corto agudo
     tone(buzzer, 1200);
     delay(150);
     noTone(buzzer);
