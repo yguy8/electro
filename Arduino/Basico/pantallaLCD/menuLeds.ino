@@ -4,7 +4,8 @@
 LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
 
 // Pines del joystick
-int joyX = A1;
+int joyX = A0;
+//int joyY = A1;
 int joyButton = 8;
 
 // Pines de LEDs
