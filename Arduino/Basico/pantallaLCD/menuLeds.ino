@@ -4,7 +4,7 @@
 LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
 
 // Pines del joystick
-int joyY = A1;
+int joyX = A1;
 int joyButton = 8;
 
 // Pines de LEDs
@@ -29,7 +29,7 @@ void setup() {
 }
 
 void loop() {
-  int yValue = analogRead(joyY);
+  int yValue = analogRead(joyX);
   int buttonState = digitalRead(joyButton);
 
   // Movimiento hacia arriba
