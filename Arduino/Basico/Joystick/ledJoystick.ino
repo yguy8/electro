@@ -10,9 +10,6 @@ const int ledVerde = 4;
 const int ledAmarillo = 5;
 const int ledBlanco = 6;
 
-const int lowThreshold = 300;
-const int highThreshold = 700;
-
 void setup() {
   pinMode(ledAzul, OUTPUT);
   pinMode(ledRojo, OUTPUT);
@@ -35,17 +32,19 @@ void loop() {
   digitalWrite(ledBlanco, LOW);
 
   // X positivo → Azul
-  if (xValue > highThreshold) digitalWrite(ledAzul, HIGH);
+  if (xValue > 550) digitalWrite(ledAzul, HIGH);
 
   // X negativo → Rojo
-  if (xValue < lowThreshold) digitalWrite(ledRojo, HIGH);
+  if (xValue < 10) digitalWrite(ledRojo, HIGH);
 
   // Y positivo → Verde
-  if (yValue > highThreshold) digitalWrite(ledVerde, HIGH);
+  if (yValue > 550) digitalWrite(ledVerde, HIGH);
 
   // Y negativo → Amarillo
-  if (yValue < lowThreshold) digitalWrite(ledAmarillo, HIGH);
+  if (yValue < 10) digitalWrite(ledBlanco, HIGH);
 
   // Botón → Blanco
-  if (button == LOW) digitalWrite(ledBlanco, HIGH);
+  if (button == LOW) digitalWrite(ledAmarillo, HIGH);
 }
+
+//esta medio extraño como funciono pero funciono
