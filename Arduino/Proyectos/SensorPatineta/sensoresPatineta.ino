@@ -3,7 +3,7 @@
 #define RED 3
 #define GREEN 5
 #define BLUE 6
-#define BUZZER 8
+#define BUZZER 8   // único buzzer pasivo
 
 #define JOY_X A0
 #define JOY_Y A1
@@ -14,11 +14,11 @@
 bool ledsEncendidos = false;
 bool modoParpadeo = false;
 
-// Frecuencias buzzer
-const int FREQ_CRITICA = 2500;   // rojo
-const int FREQ_PRECAUCION = 1500; // naranja
-const int FREQ_SWITCH = 700;     // confirmación
-const int FREQ_RELE = 1000;      // clic tipo relé
+// Frecuencias
+const int FREQ_CRITICA = 2500;   // rojo (alarma aguda)
+const int FREQ_PRECAUCION = 1500; // naranja (alarma media)
+const int FREQ_SWITCH = 700;     // beep confirmación
+const int FREQ_RELE = 800;      // clic tipo relé
 
 void setup() {
   pinMode(TRIG, OUTPUT);
@@ -42,8 +42,7 @@ long medirDistancia() {
   delayMicroseconds(10);
   digitalWrite(TRIG, LOW);
   long duracion = pulseIn(ECHO, HIGH);
-  long distancia = duracion * 0.034 / 2; // cm
-  return distancia;
+  return duracion * 0.034 / 2; // cm
 }
 
 void loop() {
@@ -51,21 +50,25 @@ void loop() {
 
   // --- RGB + buzzer según distancia ---
   if (d <= 8) {
-    analogWrite(RED, 255);
-    analogWrite(GREEN, 0);
-    analogWrite(BLUE, 0);
+    digitalWrite(RED, HIGH);
+    digitalWrite(GREEN, LOW);
+    digitalWrite(BLUE, LOW);
     tone(BUZZER, FREQ_CRITICA, 120);
     delay(120);
+    noTone(BUZZER);
+    delay(120);
   } else if (d <= 15) {
-    analogWrite(RED, 255);
-    analogWrite(GREEN, 150);
-    analogWrite(BLUE, 0);
+    digitalWrite(RED, HIGH);
+    digitalWrite(GREEN, HIGH);
+    digitalWrite(BLUE, LOW);
     tone(BUZZER, FREQ_PRECAUCION, 250);
+    delay(250);
+    noTone(BUZZER);
     delay(600);
   } else {
-    analogWrite(RED, 0);
-    analogWrite(GREEN, 0);
-    analogWrite(BLUE, 0);
+    digitalWrite(RED, LOW);
+    digitalWrite(GREEN, LOW);
+    digitalWrite(BLUE, LOW);
     noTone(BUZZER);
   }
 
@@ -74,12 +77,12 @@ void loop() {
   int yVal = analogRead(JOY_Y);
   int swVal = digitalRead(JOY_SW);
 
-  // Switch: enciende/apaga LEDs en modo fijo
   if (swVal == LOW) {
     ledsEncendidos = !ledsEncendidos;
-    modoParpadeo = false; // al presionar switch cancela parpadeo
-    tone(BUZZER, FREQ_SWITCH, 100);
-    delay(300); // debounce
+    modoParpadeo = false; // cancela parpadeo
+    tone(BUZZER, FREQ_SWITCH, 100); // beep confirmación
+    delay(300);
+    noTone(BUZZER);
   }
 
   if (ledsEncendidos) {
@@ -87,34 +90,29 @@ void loop() {
     if (xVal < 50) {
       modoParpadeo = true;
     } else if (xVal > 970) {
-      modoParpadeo = false; // LEDs fijos
+      modoParpadeo = false;
     }
 
+    int brillo = 128;
+    if (yVal > 970) brillo = 255;
+    else if (yVal < 50) brillo = 50;
+
     if (modoParpadeo) {
-      // Parpadeo con clic de relé
-      analogWrite(LED1, 255);
-      analogWrite(LED2, 255);
-      tone(BUZZER, FREQ_RELE, 100);
+      // Ambas luces parpadean juntas + clic relé
+      analogWrite(LED1, brillo);
+      analogWrite(LED2, brillo);
+      tone(BUZZER, FREQ_RELE, 100); // clic relé
       delay(300);
       analogWrite(LED1, 0);
       analogWrite(LED2, 0);
       noTone(BUZZER);
       delay(300);
     } else {
-      // LEDs fijos, brillo controlado por Y
-      int brillo = 128; // valor base
-
-      if (yVal > 970) {
-        brillo = 255; // máximo brillo
-      } else if (yVal < 50) {
-        brillo = 50; // brillo bajo
-      }
-
+      // LEDs fijos
       analogWrite(LED1, brillo);
       analogWrite(LED2, brillo);
     }
   } else {
-    // LEDs apagados
     analogWrite(LED1, 0);
     analogWrite(LED2, 0);
     noTone(BUZZER);
