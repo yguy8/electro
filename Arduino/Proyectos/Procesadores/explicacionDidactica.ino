@@ -18,6 +18,9 @@ int joySW = A2;
 // Buzzer activo
 int buzz = A3;
 
+// LED indicador de fin de ciclo
+int ledFin = A4;
+
 int menuOption = 0; // 0=CPU, 1=GPU, 2=TPU
 
 void setup() {
@@ -35,6 +38,9 @@ void setup() {
   pinMode(joySW, INPUT_PULLUP); // botón joystick
   pinMode(buzz, OUTPUT);
   digitalWrite(buzz, LOW);
+
+  pinMode(ledFin, OUTPUT);
+  digitalWrite(ledFin, LOW);
 }
 
 void loop() {
@@ -98,26 +104,24 @@ void cpuMode() {
       delay(300); // pausa larga
     }
   }
+  cicloCompletado();
 }
 
 // --- MODO GPU ---
 void gpuMode() {
-  // Encender todos los LEDs en paralelo
   for (int f=0; f<3; f++) digitalWrite(filas[f], HIGH);
   for (int c=0; c<3; c++) digitalWrite(columnas[c], LOW);
 
   // Buzzer solo en el momento de encendido
   digitalWrite(buzz, HIGH);
-  delay(100);   // pulso breve, rápido
+  delay(100);
   digitalWrite(buzz, LOW);
 
-  // Mantener LEDs encendidos un instante
   delay(400);
-
-  // Apagar matriz
   apagarMatriz();
-}
 
+  cicloCompletado();
+}
 
 // --- MODO TPU ---
 void tpuMode() {
@@ -130,4 +134,14 @@ void tpuMode() {
   }
   delay(300);
   apagarMatriz();
+
+  cicloCompletado();
+}
+
+// --- LED indicador de fin de ciclo ---
+void cicloCompletado() {
+  digitalWrite(ledFin, HIGH);
+  delay(300);
+  digitalWrite(ledFin, LOW);
+  delay(300);
 }
