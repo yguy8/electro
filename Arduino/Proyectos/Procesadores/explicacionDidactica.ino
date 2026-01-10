@@ -11,9 +11,8 @@ int filas[3] = {8, 9, 10};
 int columnas[3] = {11, 12, 13};
 
 // Joystick
-int joyX = A0;
-int joyY = A1;
-int joySW = A2;
+int joyX = A0;   // navegación izquierda/derecha
+int joySW = A2;  // selección con botón
 
 // Buzzer activo
 int buzz = A3;
@@ -21,21 +20,21 @@ int buzz = A3;
 // LED indicador de fin de ciclo
 int ledFin = A4;
 
-int menuOption = 0; // 0=CPU, 1=GPU, 2=TPU
+int menuOption = 0;     // 0=CPU, 1=GPU, 2=TPU
+int currentOption = -1; // opción actualmente ejecutándose
 
 void setup() {
   lcd.begin(16, 2);
   lcd.print("Menu Procesador");
 
-  // Configurar filas y columnas
   for (int i=0; i<3; i++) {
     pinMode(filas[i], OUTPUT);
     pinMode(columnas[i], OUTPUT);
     digitalWrite(filas[i], LOW);
-    digitalWrite(columnas[i], HIGH); // columnas apagadas
+    digitalWrite(columnas[i], HIGH);
   }
 
-  pinMode(joySW, INPUT_PULLUP); // botón joystick
+  pinMode(joySW, INPUT_PULLUP);
   pinMode(buzz, OUTPUT);
   digitalWrite(buzz, LOW);
 
@@ -45,40 +44,35 @@ void setup() {
 
 void loop() {
   int xVal = analogRead(joyX);
-  int yVal = analogRead(joyY);
   int swVal = digitalRead(joySW);
 
-  // Navegación con joystick
+  // Navegación con joystick (izquierda/derecha)
   if (xVal < 300) { // izquierda
-    menuOption = 2; // TPU
+    menuOption--;
+    if (menuOption < 0) menuOption = 2;
+    delay(200);
   } else if (xVal > 700) { // derecha
-    menuOption = 1; // GPU
-  } else if (yVal < 300) { // arriba
-    menuOption = 0; // CPU
+    menuOption++;
+    if (menuOption > 2) menuOption = 0;
+    delay(200);
   }
 
-  // Confirmación con botón
-  if (swVal == LOW) {
-    lcd.clear();
-    lcd.print("Ejecutando...");
-    digitalWrite(buzz, HIGH);
-    delay(300);
-    digitalWrite(buzz, LOW);
-    delay(300);
-  }
-
-  // Mostrar modo actual
+  // Mostrar opción actual en LCD SIEMPRE
   lcd.clear();
-  if (menuOption == 0) {
-    lcd.print("CPU: secuencial");
-    cpuMode();
-  } else if (menuOption == 1) {
-    lcd.print("GPU: paralelo");
-    gpuMode();
-  } else if (menuOption == 2) {
-    lcd.print("TPU: IA");
-    tpuMode();
+  if (menuOption == 0) lcd.print("CPU: secuencial");
+  else if (menuOption == 1) lcd.print("GPU: paralelo");
+  else if (menuOption == 2) lcd.print("TPU: IA");
+
+  // Confirmación con botón → activa ejecución indefinida
+  if (swVal == LOW) {
+    currentOption = menuOption; // guarda la opción seleccionada
+    delay(300);
   }
+
+  // Si hay una opción activa, ejecutarla en bucle
+  if (currentOption == 0) cpuMode();
+  else if (currentOption == 1) gpuMode();
+  else if (currentOption == 2) tpuMode();
 }
 
 // --- Funciones de control LEDs ---
@@ -98,10 +92,10 @@ void cpuMode() {
   for (int f=0; f<3; f++) {
     for (int c=0; c<3; c++) {
       encenderLED(f, c);
-      digitalWrite(buzz, HIGH); // pulso lento
+      digitalWrite(buzz, HIGH);
       delay(200);
       digitalWrite(buzz, LOW);
-      delay(300); // pausa larga
+      delay(300);
     }
   }
   cicloCompletado();
@@ -112,7 +106,6 @@ void gpuMode() {
   for (int f=0; f<3; f++) digitalWrite(filas[f], HIGH);
   for (int c=0; c<3; c++) digitalWrite(columnas[c], LOW);
 
-  // Buzzer solo en el momento de encendido
   digitalWrite(buzz, HIGH);
   delay(100);
   digitalWrite(buzz, LOW);
@@ -126,11 +119,11 @@ void gpuMode() {
 // --- MODO TPU ---
 void tpuMode() {
   for (int i=0; i<3; i++) {
-    encenderLED(i, i); // diagonal
-    digitalWrite(buzz, HIGH); // pulso rápido
+    encenderLED(i, i);
+    digitalWrite(buzz, HIGH);
     delay(100);
     digitalWrite(buzz, LOW);
-    delay(100); // pausa corta
+    delay(100);
   }
   delay(300);
   apagarMatriz();
