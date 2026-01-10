@@ -92,34 +92,41 @@ void cpuMode() {
   for (int f=0; f<3; f++) {
     for (int c=0; c<3; c++) {
       encenderLED(f, c);
-      digitalWrite(buzz, HIGH); // tic
-      delay(150);
+      digitalWrite(buzz, HIGH); // pulso lento
+      delay(200);
       digitalWrite(buzz, LOW);
-      delay(150);
+      delay(300); // pausa larga
     }
   }
 }
 
 // --- MODO GPU ---
 void gpuMode() {
+  // Encender todos los LEDs en paralelo
   for (int f=0; f<3; f++) digitalWrite(filas[f], HIGH);
   for (int c=0; c<3; c++) digitalWrite(columnas[c], LOW);
 
-  digitalWrite(buzz, HIGH); // ráfaga
-  delay(500);
+  // Buzzer solo en el momento de encendido
+  digitalWrite(buzz, HIGH);
+  delay(100);   // pulso breve, rápido
   digitalWrite(buzz, LOW);
 
+  // Mantener LEDs encendidos un instante
+  delay(400);
+
+  // Apagar matriz
   apagarMatriz();
 }
+
 
 // --- MODO TPU ---
 void tpuMode() {
   for (int i=0; i<3; i++) {
     encenderLED(i, i); // diagonal
-    digitalWrite(buzz, HIGH); // flujo
+    digitalWrite(buzz, HIGH); // pulso rápido
     delay(100);
     digitalWrite(buzz, LOW);
-    delay(100);
+    delay(100); // pausa corta
   }
   delay(300);
   apagarMatriz();
