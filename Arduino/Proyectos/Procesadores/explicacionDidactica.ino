@@ -10,18 +10,14 @@ LiquidCrystal lcd(7, 6, 5, 4, 3, 2);
 int filas[3] = {8, 9, 10};
 int columnas[3] = {11, 12, 13};
 
-// Joystick
-int joyX = A0;   // navegación izquierda/derecha
-int joySW = A2;  // selección con botón
-
 // Buzzer activo
 int buzz = A3;
 
 // LED indicador de fin de ciclo
 int ledFin = A4;
 
-int menuOption = 0;     // 0=CPU, 1=GPU, 2=TPU
-int currentOption = -1; // opción actualmente ejecutándose
+String inputOption = "";   // texto recibido por Serial
+int currentOption = -1;    // opción actualmente ejecutándose
 
 void setup() {
   lcd.begin(16, 2);
@@ -34,42 +30,42 @@ void setup() {
     digitalWrite(columnas[i], HIGH);
   }
 
-  pinMode(joySW, INPUT_PULLUP);
   pinMode(buzz, OUTPUT);
   digitalWrite(buzz, LOW);
 
   pinMode(ledFin, OUTPUT);
   digitalWrite(ledFin, LOW);
+
+  Serial.begin(9600);
+  Serial.println("Escribe CPU, GPU o TPU:");
 }
 
 void loop() {
-  int xVal = analogRead(joyX);
-  int swVal = digitalRead(joySW);
+  // Leer entrada del Serial
+  if (Serial.available() > 0) {
+    inputOption = Serial.readStringUntil('\n');
+    inputOption.trim(); // elimina espacios y saltos
 
-  // Navegación con joystick (izquierda/derecha)
-  if (xVal < 300) { // izquierda
-    menuOption--;
-    if (menuOption < 0) menuOption = 2;
-    delay(200);
-  } else if (xVal > 700) { // derecha
-    menuOption++;
-    if (menuOption > 2) menuOption = 0;
-    delay(200);
+    if (inputOption.equalsIgnoreCase("CPU")) {
+      currentOption = 0;
+      lcd.clear();
+      lcd.print("Ejecutandose CPU");
+    } else if (inputOption.equalsIgnoreCase("GPU")) {
+      currentOption = 1;
+      lcd.clear();
+      lcd.print("Ejecutandose GPU");
+    } else if (inputOption.equalsIgnoreCase("TPU")) {
+      currentOption = 2;
+      lcd.clear();
+      lcd.print("Ejecutandose TPU");
+    } else {
+      lcd.clear();
+      lcd.print("Opcion invalida");
+      currentOption = -1;
+    }
   }
 
-  // Mostrar opción actual en LCD SIEMPRE
-  lcd.clear();
-  if (menuOption == 0) lcd.print("CPU: secuencial");
-  else if (menuOption == 1) lcd.print("GPU: paralelo");
-  else if (menuOption == 2) lcd.print("TPU: IA");
-
-  // Confirmación con botón → activa ejecución indefinida
-  if (swVal == LOW) {
-    currentOption = menuOption; // guarda la opción seleccionada
-    delay(300);
-  }
-
-  // Si hay una opción activa, ejecutarla en bucle
+  // Ejecutar la opción activa
   if (currentOption == 0) cpuMode();
   else if (currentOption == 1) gpuMode();
   else if (currentOption == 2) tpuMode();
