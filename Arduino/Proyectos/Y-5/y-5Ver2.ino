@@ -18,7 +18,6 @@ int tiltPin = 2;   // sensor tilt digital
 int vibPin = A1;   // sensor vibración analógico
 
 // --- Variables ---
-String comando = "";
 unsigned long ultimaActividadSonido = 0;
 const unsigned long T_SILENCIO = 120000UL; // 2 minutos
 
@@ -80,7 +79,7 @@ void reaccionCuriosidad() {
 void reaccionCelebracion() {
   Serial.println("Modo: Celebración");
   for (int i=0; i<6; i++) {
-    setEyes(random(0,255), random(0,255), random(0,255)); // colores aleatorios
+    setEyes(255,255,0); // amarillo fijo
     tone(buzzer_pin, 600+i*100, 150);
     delay(200);
   }
@@ -96,48 +95,6 @@ void reaccionSorpresa() {
   ojosNaturales();
 }
 
-void reaccionConversacion() {
-  Serial.println("Modo: Conversación");
-  for (int i=0; i<4; i++) {
-    setEyes(0,255,255); // cian
-    tone(buzzer_pin, 600+i*100, 150);
-    delay(200);
-    setEyes(255,255,255); // blanco
-    delay(200);
-  }
-  noTone(buzzer_pin);
-}
-
-void reaccionExploracion() {
-  Serial.println("Modo: Exploración");
-  setEyes(0,0,255); // azul
-  for (int i=0; i<3; i++) {
-    tone(buzzer_pin, 400+i*50, 200);
-    delay(500);
-  }
-  noTone(buzzer_pin);
-  ojosNaturales();
-}
-
-void reaccionAlerta() {
-  Serial.println("Modo: ALERTA");
-  for (int i=0; i<6; i++) {
-    setEyes(255,0,0); // rojo
-    tone(buzzer_pin, 1000, 200);
-    delay(300);
-    setEyes(0,0,0); // apagado
-    noTone(buzzer_pin);
-    delay(300);
-  }
-  // transición a amarillo
-  for (int c=0; c<=255; c+=5) {
-    setEyes(c,c,0);
-    delay(20);
-  }
-  ojosNaturales();
-}
-
-// --- Nueva reacción: ALERTA MÁXIMA ---
 void reaccionAlertaMaxima() {
   Serial.println("ALERTA MÁXIMA: Y-5 en peligro");
   
@@ -173,52 +130,27 @@ void loop() {
   int tilt = digitalRead(tiltPin);
   int vib = analogRead(vibPin);
 
-  // --- ALERTA MÁXIMA ---
+  // --- Priorización de estados ---
   if (tilt == HIGH && vib > 500 && sonido > 600) {
     reaccionAlertaMaxima();
-    ultimaActividadSonido = millis(); // reinicia contador de silencio
+    ultimaActividadSonido = millis();
+  }
+  else if (sonido > 600) {
+    reaccionCuriosidad();
+    ultimaActividadSonido = millis();
+  }
+  else if (tilt == HIGH) {
+    reaccionSorpresa();
+  }
+  else if (vib > 500) {
+    reaccionCelebracion();
+  }
+  else if (millis() - ultimaActividadSonido > T_SILENCIO) {
+    reaccionSueno();
+    ultimaActividadSonido = millis();
   }
   else {
-    // --- Micrófono ---
-    if (sonido > 600) { // ruido fuerte → curiosidad
-      reaccionCuriosidad();
-      ultimaActividadSonido = millis();
-    } else {
-      // si hay silencio prolongado → sueño
-      if (millis() - ultimaActividadSonido > T_SILENCIO) {
-        reaccionSueno();
-        ultimaActividadSonido = millis();
-      }
-    }
-
-    // --- Tilt ---
-    if (tilt == HIGH) {
-      reaccionSorpresa();
-    }
-
-    // --- Vibración ---
-    if (vib > 500) {
-      reaccionCelebracion();
-    }
-  }
-
-  // --- Control por Serial ---
-  if (Serial.available() > 0) {
-    comando = Serial.readStringUntil('\n');
-    comando.trim();
-
-    if (comando == "natural") ojosNaturales();
-    else if (comando == "pensar") reaccionPensando();
-    else if (comando == "feliz") reaccionFelicidad();
-    else if (comando == "sueno") reaccionSueno();
-    else if (comando == "curioso") reaccionCuriosidad();
-    else if (comando == "celebrar") reaccionCelebracion();
-    else if (comando == "sorpresa") reaccionSorpresa();
-    else if (comando == "conversar") reaccionConversacion();
-    else if (comando == "explorar") reaccionExploracion();
-    else if (comando == "alerta") reaccionAlerta();
-    else if (comando == "alertamax") reaccionAlertaMaxima(); // nuevo comando
-    else Serial.println("Comando no reconocido.");
+    ojosNaturales();
   }
 
   delay(200); // pequeña pausa para estabilidad
