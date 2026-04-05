@@ -45,5 +45,10 @@ void loop() {
   lcd.setCursor(0, 0);
   lcd.print(distance);
   lcd.print("cm   ");
-  delay(50);
+  delay(250);
+
+  //prueba de que funciona bien el sensor ultrasonico
+  // Serial.print(distance);
+  // Serial.println(" cm");
+  // delay(5000);
 }
