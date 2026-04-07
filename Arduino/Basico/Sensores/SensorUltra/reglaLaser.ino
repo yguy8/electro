@@ -43,10 +43,20 @@ void loop() {
 
 
   //mostrar en pantalla LCD
-  lcd.setCursor(0, 0);
-  lcd.print(distance);
-  lcd.print("cm   ");
-  delay(250);
+  if(distance == 1182){
+    lcd.setCursor(0, 0);
+    lcd.print(distance);
+    lcd.setCursor(0, 1);
+    lcd.print("Algo anda mal");
+  } else {
+      lcd.setCursor(0, 0);
+      lcd.print(distance);
+      lcd.print("cm   ");
+      lcd.setCursor(0, 1);
+      lcd.print("             ");
+  }
+  delay(350);
+  
 
   //prueba de que funciona bien el sensor ultrasonico
   // Serial.print(distance);
