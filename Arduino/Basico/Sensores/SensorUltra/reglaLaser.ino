@@ -1,17 +1,18 @@
+
 //configuración y pines de la pantalla
 #include <LiquidCrystal.h>
-int rs = 7;
-int e = 6;
+int rs = 12;
+int e = 11;
 int d4 = 5;
 int d5 = 4;
 int d6 = 3;
 int d7 = 2;
 LiquidCrystal lcd(rs, e, d4, d5, d6, d7);
 //pines del sensor ultrasonico
-int trigPin = 11; 
-int echoPin = 10;
+int trigPin = 9; 
+int echoPin = 8;
 //pin del laser
-int laserPin = 8;
+int laserPin = 13;
 
 long duration;
 int distance;
